@@ -70,15 +70,28 @@ import java_cup.runtime.*;
 /***********************/
 /* MACRO DECALARATIONS */
 /***********************/
-LineTerminator	= \r|\n|\r\n
-WhiteSpace		= [\r|\n|\r\n] | [ \t]
-INTEGER			= 0 | [1-9][0-9]*
-STRING			= \"[a-zA-Z]*\"
-ID			= [a-zA-Z]+[a-zA-Z0-9]*
-LEGAL_CHARS 		= a-zA-Z0-9\t\(\)\[\]\{\}\?\!\+\-\.\;
-TYPE1_COMMENT		= \/\/[a-zA-Z 0-9\t\(\)\[\]\{\}\?\!\+\-\.\;]*[\r|\n|\r\n]
-TYPE2_COMMENT		= \/\*([a-zA-Z0-9 \t\(\)\{\}\[\]\?\!\+\/\r|\n|\r\n]|\*+[^\/])*\*\/
-INVALID_COMMENT		= (\/\*)|(\/\/[\r|\n|\r\n])
+LineTerminator = \r|\n|\r\n
+NonLineTerminator = [ \t\f]
+WhiteSpace = {LineTerminator} | {NonLineTerminator}
+COMMENT_STAR = ([A-Za-z0-9]|{WhiteSpace}|[(){}\[\]?!*+-\.;])
+COMMENT_SLASH = ([A-Za-z0-9]|{WhiteSpace}|[(){}\[\]?!/+-\.;])
+COMMENT_PADDING = ([A-Za-z0-9]|{WhiteSpace}|[(){}\[\]?!+-\.;])
+COMMENT_CONTENT = ({COMMENT_STAR}*{COMMENT_PADDING}{COMMENT_SLASH}*)* | {COMMENT_STAR}* | {COMMENT_SLASH}*
+TYPE1_COMMENT = ("//"([A-Za-z0-9]|{NonLineTerminator}|[(){}\[\]?!*+-/\.;])*{LineTerminator})
+TYPE2_COMMENT = ("/*"{COMMENT_CONTENT}"*/")
+COMMENT = ({COMMENT_TYPE1} | {COMMENT_TYPE2})
+INTEGER = 0 | [1-9][0-9]*
+STRING = \"[a-zA-Z]*\"
+ID = [a-zA-Z][a-zA-Z0-9]*
+
+INVALID_COMMENT = "/*" | "//"
+INVALID_INTEGER = (0+[0-9]+) | ([0-9][0-9][0-9][0-9][0-9][0-9]+)
+
+
+
+
+
+
 /******************************/
 /* DOLAR DOLAR - DON'T TOUCH! */
 /******************************/
@@ -96,6 +109,10 @@ INVALID_COMMENT		= (\/\*)|(\/\/[\r|\n|\r\n])
 /**************************************************************/
 
 <YYINITIAL> {
+{TYPE1_COMMENT}			{}
+{TYPE2_COMMENT}			{}
+{INVALID_INTEGER}		{return symbol(TokenNames.ERROR);}
+{INVALID_COMMENT}		{return symbol(TokenNames.ERROR);}
 
 "+"					{ return symbol(TokenNames.PLUS);}
 "-"					{ return symbol(TokenNames.MINUS);}
@@ -132,8 +149,7 @@ INVALID_COMMENT		= (\/\*)|(\/\/[\r|\n|\r\n])
 "class"					{return symbol(TokenNames.CLASS);}
 
 
-{TYPE1_COMMENT}			{}
-{TYPE2_COMMENT}			{}
+
 
 
 {INTEGER}			{ int x = new Integer(yytext());
