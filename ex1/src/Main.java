@@ -40,20 +40,27 @@ public class Main
 			/********************************/
 			/* [5] Main reading tokens loop */
 			/********************************/
+			System.out.println(inputFilename);
 			while (s.sym != TokenNames.EOF)
 			{
 				/************************/
 				/* [6] Print to console */
 				/************************/
+				if(s.sym == TokenNames.ERROR){
+					file_writer = new PrintWriter(outputFilename);
+					//System.out.print("ERROR");
+					file_writer.print("ERROR");
+					break;
+				}
 
 				String var = getSymbol(s);
-				System.out.print(var);
+				/*System.out.print(var);
 				System.out.print("[");
 				System.out.print(l.getLine());
 				System.out.print(",");
 				System.out.print(l.getTokenStartPosition());
-				System.out.print("]");
-				System.out.print("\n");
+				System.out.print("]");*/
+				
 
 				
 				/*********************/
@@ -65,12 +72,16 @@ public class Main
 				file_writer.print(",");
 				file_writer.print(l.getTokenStartPosition());
 				file_writer.print("]");
-				file_writer.print("\n");
+				
 				
 				/***********************/
 				/* [8] Read next token */
 				/***********************/
 				s = l.next_token();
+				if(s.sym!=TokenNames.EOF){
+					//System.out.print("\n");
+					file_writer.print("\n");
+				}
 			}
 			
 			/******************************/
@@ -87,6 +98,7 @@ public class Main
 		catch (Exception e)
 		{
 			e.printStackTrace();
+
 		}
 	}
 	private static String getSymbol(Symbol s){
