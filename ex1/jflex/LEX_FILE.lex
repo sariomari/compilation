@@ -72,15 +72,16 @@ import java_cup.runtime.*;
 /***********************/
 
 LineTerminator = \r|\n|\r\n
-NonLineTerminator = [ \t\f]
-WhiteSpace = {LineTerminator} | {NonLineTerminator}
-
-COMMENT_STAR = ([A-Za-z0-9]|{WhiteSpace}|[(){}\[\]?!*+-\.;])
-COMMENT_SLASH = ([A-Za-z0-9]|{WhiteSpace}|[(){}\[\]?!/+-\.;])
-COMMENT_PADDING = ([A-Za-z0-9]|{WhiteSpace}|[(){}\[\]?!+-\.;])
-COMMENT_CONTENT = ({COMMENT_STAR}*{COMMENT_PADDING}{COMMENT_SLASH}*)* | {COMMENT_STAR}* | {COMMENT_SLASH}*
-TYPE1_COMMENT = ("//"([A-Za-z0-9]|{NonLineTerminator}|[(){}\[\]?!*+-/\.;])*{LineTerminator})
+WhiteSpace = {LineTerminator} | [ \t\f]
+NORMAL_WORD = [A-Za-z0-9]|{WhiteSpace}
+COMMENT_WITH_STAR = ({NORMAL_WORD}|[(){}\[\]?!*+-\.;])
+COMMENT_WITH_SLASH = ({NORMAL_WORD}|[(){}\[\]?!/+-\.;])
+COMMENT_WITH_PADDING = ({NORMAL_WORD}|[(){}\[\]?!+-\.;])
+COMMENT_CONTENT = ({COMMENT_WITH_STAR}*{COMMENT_WITH_PADDING}{COMMENT_WITH_SLASH}*)* | {COMMENT_WITH_STAR}* | {COMMENT_WITH_SLASH}*
 TYPE2_COMMENT = ("/*"{COMMENT_CONTENT}"*/")
+
+TYPE1_COMMENT = ("//"([A-Za-z0-9]|[ \t\f]|[(){}\[\]?!*+-/\.;])*{LineTerminator})
+
 
 INTEGER = 0 | [1-9][0-9]*
 STRING = \"[a-zA-Z]*\"
