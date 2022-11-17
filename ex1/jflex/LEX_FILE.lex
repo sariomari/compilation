@@ -70,21 +70,24 @@ import java_cup.runtime.*;
 /***********************/
 /* MACRO DECALARATIONS */
 /***********************/
+
 LineTerminator = \r|\n|\r\n
 NonLineTerminator = [ \t\f]
 WhiteSpace = {LineTerminator} | {NonLineTerminator}
+
 COMMENT_STAR = ([A-Za-z0-9]|{WhiteSpace}|[(){}\[\]?!*+-\.;])
 COMMENT_SLASH = ([A-Za-z0-9]|{WhiteSpace}|[(){}\[\]?!/+-\.;])
 COMMENT_PADDING = ([A-Za-z0-9]|{WhiteSpace}|[(){}\[\]?!+-\.;])
 COMMENT_CONTENT = ({COMMENT_STAR}*{COMMENT_PADDING}{COMMENT_SLASH}*)* | {COMMENT_STAR}* | {COMMENT_SLASH}*
 TYPE1_COMMENT = ("//"([A-Za-z0-9]|{NonLineTerminator}|[(){}\[\]?!*+-/\.;])*{LineTerminator})
 TYPE2_COMMENT = ("/*"{COMMENT_CONTENT}"*/")
-COMMENT = ({COMMENT_TYPE1} | {COMMENT_TYPE2})
+
 INTEGER = 0 | [1-9][0-9]*
 STRING = \"[a-zA-Z]*\"
 ID = [a-zA-Z][a-zA-Z0-9]*
 
-INVALID_COMMENT = "/*" | "//"
+INVALID_ID = [^ID]
+INVALID_COMMENT = (\/\*)|(\/\/{LineTerminator})
 INVALID_INTEGER = (0+[0-9]+) | ([0-9][0-9][0-9][0-9][0-9][0-9]+)
 
 
@@ -113,6 +116,7 @@ INVALID_INTEGER = (0+[0-9]+) | ([0-9][0-9][0-9][0-9][0-9][0-9]+)
 {TYPE2_COMMENT}			{}
 {INVALID_INTEGER}		{return symbol(TokenNames.ERROR);}
 {INVALID_COMMENT}		{return symbol(TokenNames.ERROR);}
+
 
 "+"					{ return symbol(TokenNames.PLUS);}
 "-"					{ return symbol(TokenNames.MINUS);}
@@ -158,6 +162,7 @@ INVALID_INTEGER = (0+[0-9]+) | ([0-9][0-9][0-9][0-9][0-9][0-9]+)
 {STRING}			{ return symbol(TokenNames.STRING, new String(yytext()));}
 {ID}				{ return symbol(TokenNames.ID,     new String(yytext()));}   
 {WhiteSpace}		        { /* just skip what was found, do nothing */ }
+{INVALID_ID}			{return symbol(TokenNames.ERROR);}
 
 <<EOF>>				{ return symbol(TokenNames.EOF);}
 
