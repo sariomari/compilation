@@ -40,7 +40,7 @@ public class Main
 			/********************************/
 			/* [5] Main reading tokens loop */
 			/********************************/
-			System.out.println(inputFilename);
+			//System.out.println(inputFilename);
 			while (s.sym != TokenNames.EOF)
 			{
 				
