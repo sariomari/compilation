@@ -6,7 +6,7 @@ import java_cup.runtime.Symbol;
    
 public class Main
 {
-	static public void main(String argv[])
+	static public void main(String argv[]) 
 	{
 		Lexer l;
 		Symbol s;
@@ -43,6 +43,7 @@ public class Main
 			System.out.println(inputFilename);
 			while (s.sym != TokenNames.EOF)
 			{
+				
 				/************************/
 				/* [6] Print to console */
 				/************************/
@@ -54,12 +55,13 @@ public class Main
 				}
 
 				String var = getSymbol(s);
-				/*System.out.print(var);
+				/*
+				System.out.print(var);
 				System.out.print("[");
 				System.out.print(l.getLine());
 				System.out.print(",");
 				System.out.print(l.getTokenStartPosition());
-				System.out.print("]");*/
+				System.out.print("]")*/
 				
 
 				
