@@ -1,0 +1,5 @@
+class void IntList
+{
+    int head;
+    IntList tail;
+}
