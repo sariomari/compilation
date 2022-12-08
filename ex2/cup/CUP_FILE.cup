@@ -1,0 +1,309 @@
+/*************/
+/* IMPORT(S) */
+/*************/
+import java_cup.runtime.*;
+import AST.*;
+
+parser code{:
+	public Lexer lexer;
+
+	public Parser(Lexer lexer){
+		super(lexer);
+		this.lexer = lexer;
+	}
+	public void report_error(String message, Object info)
+	{
+		System.out.print("ERROR >> ");		
+		System.out.print("[");
+		System.out.print(lexer.getLine());
+		System.out.print(":");
+		System.out.print(lexer.getCharPos());
+		System.out.print("] ");
+	}
+:}
+
+/************************/
+/* CUSTOMIZE CUP PARSER */
+/************************/
+scan with
+{:
+	Symbol s;
+	s = lexer.next_token();
+	//System.out.print(s.sym);
+	System.out.print("[");
+	System.out.print(lexer.getLine());
+	System.out.print(":");
+	System.out.print(lexer.getCharPos());
+	System.out.print("] ");
+	System.out.print(TokenNames.terminalNames[s.sym]);
+	if (s.value != null)
+	{
+		System.out.print("( ");
+		System.out.print(s.value);
+		System.out.print(" )");
+	}
+	System.out.print("\n");
+	return s; 
+:};
+
+/*************/
+/* TERMINALS */
+/*************/
+
+terminal LPAREN;
+terminal RPAREN;
+terminal LBRACK;
+terminal RBRACK;
+terminal LBRACE;
+terminal RBRACE;
+terminal NIL;
+terminal TIMES;
+terminal PLUS;
+terminal MINUS;
+terminal DIVIDE;
+terminal COMMA;
+terminal DOT;
+terminal SEMICOLON;
+terminal TYPE_INT;
+terminal TYPE_VOID;
+terminal ASSIGN;
+terminal EQ;
+terminal LT;
+terminal GT;
+terminal ARRAY;
+terminal CLASS;
+terminal EXTENDS;
+terminal RETURN;
+terminal WHILE;
+terminal IF;
+terminal NEW;
+terminal TYPE_STRING;
+
+/*************/
+/* TERMINALS */
+/*************/
+terminal Integer INT;
+terminal String ID;
+terminal String STRING;
+
+/*****************/
+/* NON TERMINALS */
+/*****************/
+non terminal AST_PROGRAM Program;
+non terminal AST_DEC dec;
+non terminal AST_TYPE type;
+
+non terminal AST_ARRAYTYPEDEF arrayTypedef;
+non terminal AST_VARDEC varDec;
+non terminal AST_FUNCDEC funcDec;
+non terminal AST_CLASSDEC classDec;
+
+non terminal AST_EXP exp;
+non terminal AST_VAR var;
+non terminal AST_STMT stmt;
+non terminal AST_NEW_EXP newExp;
+non terminal AST_CFIELD cField;
+non terminal AST_BINOP BINOP;
+
+non terminal AST_STMT_LIST stmtList;
+non terminal AST_ARG_LIST argList;
+non terminal AST_CFIELD_LIST cFieldList;
+non terminal AST_EXP_LIST expList;
+non terminal AST_ARG arg;
+
+
+/***********************/
+/* OPERATOR PRECEDENCE */
+/***********************/
+precedence nonassoc ASSIGN;
+precedence left EQ;
+precedence left LT, GT;
+precedence left PLUS, MINUS;
+precedence left TIMES, DIVIDE;
+precedence nonassoc LBRACK;
+precedence nonassoc LPAREN;
+precedence left DOT;
+
+/************************/
+/* START WITH: Program */
+/************************/
+start with Program;
+
+/********************/
+/* DERIVATION RULES */
+/********************/
+
+
+Program	::=
+            dec:d	Program:p           {: RESULT = new AST_PROGRAM(d,p);    :}
+            |dec:d           {: RESULT = new AST_PROGRAM(d,null); :}
+           ;
+
+
+dec ::=
+            varDec:v           {: RESULT = new AST_DEC_VARDEC(v); :}
+        	|funcDec:f           {: RESULT = new AST_DEC_FUNCDEC(f); :}
+        	|classDec:c          {: RESULT = new AST_DEC_CLASSDEC(c); :}
+        	|arrayTypedef:a          {: RESULT = new AST_DEC_ARRAYTYPEDEF(a); :}
+        	;
+
+//dec 			::= 		varDec:vd 					{: RESULT = new AST_DEC(vd, null, null, null);       :}
+//					| funcDec:fd					{: RESULT = new AST_DEC(null, fd, null, null);       :}
+//					|classDec:cd					{: RESULT = new AST_DEC(null, null, cd, null);       :}
+//					|arrayTypedef:atd				{: RESULT = new AST_DEC(null, null, null, atd);       :}
+//					;
+
+type ::=
+            TYPE_INT           {:RESULT = new AST_TYPE("type_int");:}
+            |TYPE_STRING            {: RESULT = new AST_TYPE("type_string"); :}
+            |TYPE_VOID             {: RESULT = new AST_TYPE("type_void"); :}
+            |ID:t           {: RESULT = new AST_TYPE(t); :}
+            ;
+
+
+arrayTypedef ::= ARRAY ID:name EQ type:t LBRACK RBRACK SEMICOLON            {:RESULT = new AST_ARRAYTYPEDEF(name, t);:};
+
+
+varDec ::=
+            type:t     ID:name SEMICOLON             {:RESULT = new AST_VARDEC(t,name,null,null);:}
+           |type:t     ID:name     ASSIGN exp:exp SEMICOLON            {:RESULT = new AST_VARDEC(t,name,exp,null);:}
+           |type:t     ID:name     ASSIGN newExp:exp SEMICOLON              {:RESULT = new AST_VARDEC(t,name,null,exp);:}
+           ;
+
+
+funcDec ::=
+             type:t     ID:name     LPAREN RPAREN LBRACE stmtList:lst RBRACE                {:RESULT = new AST_FUNCDEC(t, name, null, lst);:}
+             |type:t     ID:name     LPAREN argList:args RPAREN LBRACE stmtList:lst RBRACE   {:RESULT = new AST_FUNCDEC(t, name, args, lst);:}
+            ;
+
+
+classDec ::=
+             CLASS ID:name LBRACE cFieldList:lst RBRACE             {:RESULT = new AST_CLASSDEC(name, null, lst);:}
+            |CLASS ID:name EXTENDS ID:parentClass LBRACE cFieldList :lst RBRACE             {:RESULT = new AST_CLASSDEC(name, parentClass, lst);:}
+            ;
+
+
+exp ::=
+             var:v          {:RESULT = new AST_EXP_VAR(v);:}
+            |LPAREN exp:exp RPAREN              {:RESULT = new AST_EXP_LEXPR(exp);:}
+            |exp:e1 BINOP:OP exp:e2 			{: RESULT = new AST_EXP_BINOP(e1,e2,OP.OP);   :}
+//            |exp:e1 PLUS exp:e2            {:RESULT = new AST_EXP_BINOP(e1,e2,0);:}
+//            |exp:e1 MINUS exp:e2            {:RESULT = new AST_EXP_BINOP(e1,e2,1);:}
+//            |exp:e1 TIMES exp:e2            {:RESULT = new AST_EXP_BINOP(e1,e2,2);:}
+//            |exp:e1 DIVIDE exp:e2           {:RESULT = new AST_EXP_BINOP(e1,e2,3);:}
+//            |exp:e1 LT exp:e2           {:RESULT = new AST_EXP_BINOP(e1,e2,4);:}
+//            |exp:e1 GT exp:e2           {:RESULT = new AST_EXP_BINOP(e1,e2,5);:}
+//            |exp:e1 EQ exp:e2           {:RESULT = new AST_EXP_BINOP(e1,e2,6);:}
+
+            |ID:fname LPAREN RPAREN             {:RESULT = new AST_EXP_FUNC(null,fname,null);:}
+            |ID:fname LPAREN expList:args RPAREN            {:RESULT = new AST_EXP_FUNC(null,fname,args);:}
+            |var:v DOT ID:name LPAREN RPAREN           {:RESULT = new AST_EXP_FUNC(v, name,null);:}
+            |var:v DOT ID:name LPAREN expList:args RPAREN          {:RESULT = new AST_EXP_FUNC(v, name,args);:}
+
+            |INT:i          {: RESULT = new AST_EXP_INT(i); :}
+           	|MINUS INT:i            {: RESULT = new AST_EXP_INT(-i); :}
+           	|NIL
+           	|STRING:s           {: RESULT = new AST_EXP_STRING(s);       :}
+            ;
+
+//exp			::=		var:v						{: RESULT = new AST_EXP_VAR(v);   :}
+//					| LPAREN exp:e RPAREN				{: RESULT = new AST_EXP_BAREXP(e);   :}
+//					| exp:e1 BINOP:OP exp:e2 			{: RESULT = new AST_EXP_BINOP(e1,e2,OP.OP);   :}
+//					| ID:name LPAREN RPAREN				{: RESULT = new AST_EXP_ID(name);      :}
+//					| ID:name LPAREN expList:et RPAREN		{: RESULT = new AST_EXPLST_VAR_ID(null,et,name); 	:}
+//					| var:v DOT ID:name LPAREN RPAREN		{: RESULT = new AST_EXPLST_VAR_ID(v,null,name);     :}
+//					| var:v DOT ID:name LPAREN expList:et RPAREN  	{: RESULT = new AST_EXPLST_VAR_ID(v,et,name);       :}
+//					| INT:num 					{: RESULT = new AST_EXP_INT(num);       :}
+//					| MINUS INT:num                                 {: RESULT = new AST_EXP_INT(-num);       :}
+//					| NIL
+//					| STRING:s					{: RESULT = new AST_EXP_STRING(s);:}
+//					;
+
+
+var ::=
+            ID:name             {:RESULT = new AST_VAR_SIMPLE(name);:}
+            |var:v DOT ID:name              {:RESULT = new AST_VAR_FIELD(v,name);:}
+            |var:v LBRACK exp:exp RBRACK            {:RESULT = new AST_VAR_SUBSCRIPT(v, exp);:}
+            ;
+
+
+//stmt ::=
+//            varDec:v            {: RESULT = new AST_STMT_DEC_VAR(v); :}
+//            |var:v ASSIGN newExp:newExp SEMICOLON          {:RESULT = new AST_STMT_ASSIGN(v, null, newExp);:}
+//            |var:v ASSIGN exp:exp SEMICOLON         {:RESULT = new AST_STMT_ASSIGN(v, exp, null);:}
+//
+//            |RETURN SEMICOLON           {:RESULT = new AST_STMT_RETURN(null);:}
+//            |RETURN exp:exp SEMICOLON           {:RESULT = new AST_STMT_RETURN(exp);:}
+//
+//            |IF    LPAREN exp:cond RPAREN LBRACE stmtList:commands RBRACE           {:RESULT = new AST_STMT_IF(cond,commands);:}
+//            |WHILE LPAREN exp:cond RPAREN LBRACE stmtList:commands RBRACE           {:RESULT = new AST_STMT_WHILE(cond,commands);:}
+//
+//            |ID:name LPAREN RPAREN SEMICOLON            {:RESULT = new AST_STMT_FUNC(name, null, null);:}
+//            |ID:name LPAREN expList:el RPAREN SEMICOLON          {:RESULT = new AST_STMT_FUNC(name, el, null);:}
+//            |var:v   ID:name LPAREN RPAREN SEMICOLON            {:RESULT = new AST_STMT_FUNC(name, null, v);:}
+//            |var:v   ID:name LPAREN expList:el RPAREN SEMICOLON          {:RESULT = new AST_STMT_FUNC(name, el, v);:}
+//            ;
+
+stmt			::= 		varDec:vd					{: RESULT = new  AST_STMT_DEC_VAR(vd);       :}
+					| var:v  ASSIGN exp:e SEMICOLON			{: RESULT = new AST_VAR_SUBSCRIPT_NEWEXP(v,e,null);     :}
+					| var:v  ASSIGN newExp:ne SEMICOLON		{: RESULT = new AST_VAR_SUBSCRIPT_NEWEXP(v,null,ne);:}
+					| RETURN SEMICOLON				{: RESULT = new AST_STMT_RETURN(null);     :}
+					| RETURN exp:e SEMICOLON			{: RESULT = new AST_STMT_RETURN(e);     :}
+					| IF LPAREN exp:e RPAREN LBRACE stmtList:sr RBRACE	{: RESULT = new AST_STMT_IF(e,sr);     :}
+					| WHILE LPAREN exp:e RPAREN LBRACE stmtList:sr RBRACE	{: RESULT = new AST_STMT_WHILE(e,sr);     :}
+					| ID:name LPAREN RPAREN SEMICOLON	{: RESULT = new AST_STMT_FUNCCALL(name,null,null);      	 :}
+					| ID:name LPAREN expList:et RPAREN SEMICOLON	{: RESULT = new AST_STMT_FUNCCALL(name,null,et);      	 :}
+					| var:v DOT ID:name LPAREN RPAREN SEMICOLON	{: RESULT = new AST_STMT_FUNCCALL(name,v,null);      	 :}
+					| var:v DOT ID:name LPAREN expList:et RPAREN SEMICOLON{:RESULT = new AST_STMT_FUNCCALL(name,v,et);      :}
+					;
+
+
+newExp ::=
+            NEW type:t          {:RESULT = new AST_NEW_EXP(t,null);:}
+            |NEW type:t LBRACK exp:exp RBRACK           {:RESULT = new AST_NEW_EXP(t,exp);:}
+            ;
+
+
+cField ::=
+            varDec:v           {: RESULT = new AST_CFIELD_DEC_VAR(v); :}
+            |funcDec:f           {: RESULT = new AST_CFIELD_DEC_FUNC(f); :}
+            ;
+
+
+arg ::=
+            type:t ID:name          {: RESULT = new AST_ARG(t, name); :}
+		    ;
+
+
+stmtList ::=
+            stmt:s         {:RESULT = new AST_STMT_LIST(s,null);:}
+            |stmt:s stmtList:lst            {:RESULT = new AST_STMT_LIST(s,lst);:}
+            ;
+
+
+argList ::=
+            arg:a           {:RESULT = new AST_ARG_LIST(a,null);:}
+            |arg:a1 COMMA argList:lst           {:RESULT = new AST_ARG_LIST(a1,lst);:}
+            ;
+
+
+cFieldList ::=
+                cField:cf          {: RESULT = new AST_CFIELD_LIST(cf,null); :}
+                |cField:cf	cFieldList:lst          {: RESULT = new AST_CFIELD_LIST(cf,lst);:}
+                ;
+
+
+expList	::=
+			exp:exp COMMA expList:lst          {: RESULT = new AST_EXP_LIST(exp,lst);:}
+		    |exp:exp            {: RESULT = new AST_EXP_LIST(exp,null); :}
+		    ;
+
+
+BINOP			::=		PLUS						{: RESULT = new AST_BINOP(0);       :}
+					| MINUS						{: RESULT = new AST_BINOP(1);       :}
+					| TIMES						{: RESULT = new AST_BINOP(2);       :}
+					| DIVIDE					{: RESULT = new AST_BINOP(3);       :}
+					| LT						{: RESULT = new AST_BINOP(4);       :}
+					| GT						{: RESULT = new AST_BINOP(5);       :}
+					| EQ						{: RESULT = new AST_BINOP(6);       :}
+					;
