@@ -7,8 +7,9 @@ public class AST_CFIELD_DEC_FUNC extends AST_CFIELD
     /*******************/
     /*  CONSTRUCTOR(S) */
     /*******************/
-    public AST_CFIELD_DEC_FUNC(AST_FUNCDEC funcDec)
+    public AST_CFIELD_DEC_FUNC(AST_FUNCDEC funcDec, int line)
     {
+        this.line = line;
         /******************************/
         /* SET A UNIQUE SERIAL NUMBER */
         /******************************/

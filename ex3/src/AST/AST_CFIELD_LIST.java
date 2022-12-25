@@ -10,8 +10,9 @@ public class AST_CFIELD_LIST extends AST_Node {
     /******************/
     /* CONSTRUCTOR(S) */
     /******************/
-    public AST_CFIELD_LIST(AST_CFIELD head, AST_CFIELD_LIST tail)
+    public AST_CFIELD_LIST(AST_CFIELD head, AST_CFIELD_LIST tail, int line)
     {
+        this.line = line;
         /******************************/
         /* SET A UNIQUE SERIAL NUMBER */
         /******************************/

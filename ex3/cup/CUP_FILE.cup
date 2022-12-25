@@ -156,7 +156,7 @@ type ::=
 
 
 // neeeeed to define lines for these
-//region start -----------------------------------------------------------------------------------------
+//region start TODO -----------------------------------------------------------------------------------------
 arrayTypedef ::= ARRAY ID:name EQ type:t LBRACK RBRACK SEMICOLON            {:RESULT = new AST_ARRAYTYPEDEF(name, t);:};
 
 
@@ -186,7 +186,7 @@ exp ::=
             |LPAREN exp:exp RPAREN              {:RESULT = new AST_EXP_LEXPR(exp,exp.line);:}
             |exp:e1 BINOP:OP exp:e2 			{: RESULT = new AST_EXP_BINOP(e1,e2,OP.OP, e1.line);   :}
 
-            // region start --------------------------------------------------------
+            // region start TODO --------------------------------------------------------
             |ID:fname LPAREN RPAREN             {:RESULT = new AST_EXP_FUNC(null,fname,null);:}
             |ID:fname LPAREN expList:args RPAREN            {:RESULT = new AST_EXP_FUNC(null,fname,args);:}
             |var:v DOT ID:name LPAREN RPAREN           {:RESULT = new AST_EXP_FUNC(v, name,null);:}
@@ -204,7 +204,7 @@ exp ::=
 
 
 var ::=
-            //region start ---------------------------------------------------------
+            //region start TODO ---------------------------------------------------------
             ID:name             {:RESULT = new AST_VAR_SIMPLE(name);:}
             //region end ---------------------------------------------------------
             |var:v DOT ID:name              {:RESULT = new AST_VAR_FIELD(v,name, v.line);:}
@@ -218,60 +218,66 @@ var ::=
 stmt			::= 		varDec:vd					{: RESULT = new  AST_STMT_DEC_VAR(vd, vd.line);       :}
 					| var:v  ASSIGN exp:e SEMICOLON			{: RESULT = new AST_VAR_SUBSCRIPT_NEWEXP(v,e,null, v.line);     :}
 					| var:v  ASSIGN newExp:ne SEMICOLON		{: RESULT = new AST_VAR_SUBSCRIPT_NEWEXP(v,null,ne, v.line);:}
-			// ---------------------heeeeeeeeeeeeeeeerrrrrreeeeeeeeeeeee-------------------------------------------------------
-					| RETURN SEMICOLON				{: RESULT = new AST_STMT_RETURN(null);     :}
-					| RETURN exp:e SEMICOLON			{: RESULT = new AST_STMT_RETURN(e);     :}
-					| IF LPAREN exp:e RPAREN LBRACE stmtList:sr RBRACE	{: RESULT = new AST_STMT_IF(e,sr);     :}
-					| WHILE LPAREN exp:e RPAREN LBRACE stmtList:sr RBRACE	{: RESULT = new AST_STMT_WHILE(e,sr);     :}
+			// ---------------------start region TODO-------------------------------------------------------
+					| RETURN:line SEMICOLON				{: RESULT = new AST_STMT_RETURN(null, line);     :}
+			// ---------------------end region --------------------------------------------------------
+					| RETURN exp:e SEMICOLON			{: RESULT = new AST_STMT_RETURN(e,e.line);     :}
+					| IF LPAREN exp:e RPAREN LBRACE stmtList:sr RBRACE	{: RESULT = new AST_STMT_IF(e,sr,e.line);     :}
+					| WHILE LPAREN exp:e RPAREN LBRACE stmtList:sr RBRACE	{: RESULT = new AST_STMT_WHILE(e,sr,e.line);     :}
+			//----------------------start region TODO------------------------------------------------------
 					| ID:name LPAREN RPAREN SEMICOLON	{: RESULT = new AST_STMT_FUNCCALL(name,null,null);      	 :}
 					| ID:name LPAREN expList:et RPAREN SEMICOLON	{: RESULT = new AST_STMT_FUNCCALL(name,null,et);      	 :}
 					| var:v DOT ID:name LPAREN RPAREN SEMICOLON	{: RESULT = new AST_STMT_FUNCCALL(name,v,null);      	 :}
 					| var:v DOT ID:name LPAREN expList:et RPAREN SEMICOLON{:RESULT = new AST_STMT_FUNCCALL(name,v,et);      :}
+			//----------------------end region----------------------------------------------------------
 					;
 
 
 newExp ::=
-            NEW type:t          {:RESULT = new AST_NEW_EXP(t,null);:}
-            |NEW type:t LBRACK exp:exp RBRACK           {:RESULT = new AST_NEW_EXP(t,exp);:}
+            NEW type:t          {:RESULT = new AST_NEW_EXP(t,null, t.line);:}
+            |NEW type:t LBRACK exp:exp RBRACK           {:RESULT = new AST_NEW_EXP(t,exp, t.line);:}
             ;
 
 
 cField ::=
-            varDec:v           {: RESULT = new AST_CFIELD_DEC_VAR(v); :}
-            |funcDec:f           {: RESULT = new AST_CFIELD_DEC_FUNC(f); :}
+            varDec:v           {: RESULT = new AST_CFIELD_DEC_VAR(v,v.line); :}
+            |funcDec:f           {: RESULT = new AST_CFIELD_DEC_FUNC(f,f.line); :}
             ;
 
 
 arg ::=
+    // ---------------- start region TODO----------------------------------
             type:t ID:name          {: RESULT = new AST_ARG(t, name); :}
 		    ;
+    // ---------------- end region  -----------------------------------------
 
 
 stmtList ::=
-            stmt:s         {:RESULT = new AST_STMT_LIST(s,null);:}
-            |stmt:s stmtList:lst            {:RESULT = new AST_STMT_LIST(s,lst);:}
+             stmt:s         {:RESULT = new AST_STMT_LIST(s,null,s.line);:}
+            |stmt:s stmtList:lst            {:RESULT = new AST_STMT_LIST(s,lst, s.line);:}
             ;
 
 
 argList ::=
-            arg:a           {:RESULT = new AST_ARG_LIST(a,null);:}
-            |arg:a1 COMMA argList:lst           {:RESULT = new AST_ARG_LIST(a1,lst);:}
+            arg:a           {:RESULT = new AST_ARG_LIST(a,null, a.line);:}
+            |arg:a1 COMMA argList:lst           {:RESULT = new AST_ARG_LIST(a1,lst, a1.line);:}
             ;
 
 
 cFieldList ::=
-                cField:cf          {: RESULT = new AST_CFIELD_LIST(cf,null); :}
-                |cField:cf	cFieldList:lst          {: RESULT = new AST_CFIELD_LIST(cf,lst);:}
+                cField:cf          {: RESULT = new AST_CFIELD_LIST(cf,null, cf.line); :}
+                |cField:cf	cFieldList:lst          {: RESULT = new AST_CFIELD_LIST(cf,lst, cf.line);:}
                 ;
 
 
 expList	::=
-			exp:exp COMMA expList:lst          {: RESULT = new AST_EXP_LIST(exp,lst);:}
-		    |exp:exp            {: RESULT = new AST_EXP_LIST(exp,null); :}
+			exp:exp COMMA expList:lst          {: RESULT = new AST_EXP_LIST(exp,lst, exp.line);:}
+		    |exp:exp            {: RESULT = new AST_EXP_LIST(exp,null, exp.line); :}
 		    ;
 
 
-BINOP			::=		PLUS						{: RESULT = new AST_BINOP(0);       :}
+// ------------------ start region TODO -----------------------------------------------------------------
+BINOP ::=             PLUS						{: RESULT = new AST_BINOP(0);       :}
 					| MINUS						{: RESULT = new AST_BINOP(1);       :}
 					| TIMES						{: RESULT = new AST_BINOP(2);       :}
 					| DIVIDE					{: RESULT = new AST_BINOP(3);       :}
@@ -279,3 +285,4 @@ BINOP			::=		PLUS						{: RESULT = new AST_BINOP(0);       :}
 					| GT						{: RESULT = new AST_BINOP(5);       :}
 					| EQ						{: RESULT = new AST_BINOP(6);       :}
 					;
+// ----------------- end region --------------------------------------------------------------------------

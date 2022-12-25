@@ -10,8 +10,9 @@ public class AST_ARG_LIST extends AST_Node{
     /******************/
     /* CONSTRUCTOR(S) */
     /******************/
-    public AST_ARG_LIST(AST_ARG head, AST_ARG_LIST tail)
+    public AST_ARG_LIST(AST_ARG head, AST_ARG_LIST tail, int line)
     {
+        this.line = line;
         /******************************/
         /* SET A UNIQUE SERIAL NUMBER */
         /******************************/

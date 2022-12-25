@@ -4,6 +4,7 @@ public class AST_CFIELD_DEC_VAR extends AST_CFIELD {
     public AST_VARDEC varDec;
 
     public AST_CFIELD_DEC_VAR (AST_VARDEC varDec){
+        this.line = line;
         /******************************/
         /* SET A UNIQUE SERIAL NUMBER */
         /******************************/

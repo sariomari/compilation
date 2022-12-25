@@ -4,7 +4,9 @@ public class AST_NEW_EXP extends AST_EXP {
     public AST_TYPE type;
     public AST_EXP exp;
 
-    public AST_NEW_EXP(AST_TYPE type, AST_EXP exp){
+    public AST_NEW_EXP(AST_TYPE type, AST_EXP exp, int line)
+    {
+        this.line = line;
         /******************************/
         /* SET A UNIQUE SERIAL NUMBER */
         /******************************/
