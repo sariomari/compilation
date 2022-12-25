@@ -1,5 +1,5 @@
 package AST;
-
+import TYPES.*;
 public class AST_DEC_VARDEC extends AST_DEC{
     public AST_VARDEC varDec;
 
@@ -8,6 +8,7 @@ public class AST_DEC_VARDEC extends AST_DEC{
     /******************/
     public AST_DEC_VARDEC(AST_VARDEC varDec, int line)
     {
+        this.line = line;
         /******************************/
         /* SET A UNIQUE SERIAL NUMBER */
         /******************************/
@@ -17,7 +18,7 @@ public class AST_DEC_VARDEC extends AST_DEC{
         /* COPY INPUT DATA NENBERS ... */
         /*******************************/
         this.varDec = varDec;
-        this.line = line;
+
     }
 
     /**************************************************/
@@ -41,5 +42,10 @@ public class AST_DEC_VARDEC extends AST_DEC{
         /* PRINT Edges to AST GRAPHVIZ DOT file */
         /****************************************/
         if (varDec  != null) AST_GRAPHVIZ.getInstance().logEdge(SerialNumber,varDec.SerialNumber);
+    }
+
+    public TYPE SemantMe() throws SemanticException
+    {
+        return varDec.SemantMe();
     }
 }

@@ -12,8 +12,8 @@ public abstract class AST_Node {
 	public int line; /* Code line number - for error handling */
 	/***********************************************/
 	/* The default message for an unknown AST node */
-
 	/***********************************************/
+
 	public void PrintMe() {
 		System.out.print("AST NODE UNKNOWN\n");
 	}
