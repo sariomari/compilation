@@ -28,7 +28,7 @@ public class AST_BINOP extends AST_Node{
     /*************************************************/
     public void PrintMe()
     {
-        String sOP="";
+        String sOP= "";
 
         /*********************************/
         /* CONVERT OP to a printable sOP */
