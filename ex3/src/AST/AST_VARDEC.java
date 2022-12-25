@@ -186,7 +186,7 @@ public class AST_VARDEC extends AST_Node {
         this.var_kind = var_kind;
         this.var_index = var_index;
         this.var_label = var_label;
-        //soso
+        //so
         /* If it's a class field declaration with default value assigment */
         if (exp != null && SYMBOL_TABLE.getInstance().current_class != null && SYMBOL_TABLE.getInstance().current_function == null)
         {
