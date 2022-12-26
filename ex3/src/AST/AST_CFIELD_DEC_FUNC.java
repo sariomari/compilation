@@ -49,4 +49,13 @@ public class AST_CFIELD_DEC_FUNC extends AST_CFIELD
         /****************************************/
         if (funcDec  != null) AST_GRAPHVIZ.getInstance().logEdge(SerialNumber,funcDec.SerialNumber);
     }
+    
+    
+	public TYPE SemantMe() throws SemanticException
+	{
+		return funcDec.SemantMe();
+	}
+
+	
+    
 }
