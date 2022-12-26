@@ -135,69 +135,71 @@ start with Program;
 
 
 Program	::=
-            dec:d	Program:p           {: RESULT = new AST_PROGRAM(d,p, d.line);    :}
-            |dec:d           {: RESULT = new AST_PROGRAM(d,null,d.line); :}
+            dec:d	Program:p           {: RESULT = new AST_PROGRAM(d,p, lexer.getLine());    :}
+            |dec:d                      {: RESULT = new AST_PROGRAM(d,null,lexer.getLine()); :}
            ;
 
 
 dec ::=
-            varDec:v           {: RESULT = new AST_DEC_VARDEC(v, v.line); :}
-        	|funcDec:f           {: RESULT = new AST_DEC_FUNCDEC(f, f.line); :}
-        	|classDec:c          {: RESULT = new AST_DEC_CLASSDEC(c, c.line); :}
-        	|arrayTypedef:a          {: RESULT = new AST_DEC_ARRAYTYPEDEF(a, a.line); :}
+            varDec:v           {: RESULT = new AST_DEC_VARDEC(v, lexer.getLine()); :}
+        	|funcDec:f           {: RESULT = new AST_DEC_FUNCDEC(f, lexer.getLine()); :}
+        	|classDec:c          {: RESULT = new AST_DEC_CLASSDEC(c, lexer.getLine()); :}
+        	|arrayTypedef:a          {: RESULT = new AST_DEC_ARRAYTYPEDEF(a, lexer.getLine()); :}
         	;
 
 type ::=
-            TYPE_INT           {:RESULT = new AST_TYPE("type_int");:}
-            |TYPE_STRING            {: RESULT = new AST_TYPE("type_string"); :}
-            |TYPE_VOID             {: RESULT = new AST_TYPE("type_void"); :}
-            |ID:t           {: RESULT = new AST_TYPE(t); :}
+            TYPE_INT           {:RESULT = new AST_TYPE("type_int",lexer.getLine());:}
+            |TYPE_STRING            {: RESULT = new AST_TYPE("type_string",lexer.getLine()); :}
+            |TYPE_VOID             {: RESULT = new AST_TYPE("type_void",lexer.getLine()); :}
+            |ID:t           {: RESULT = new AST_TYPE(t, lexer.getLine()); :}
             ;
 
 
 // neeeeed to define lines for these
 //region start TODO -----------------------------------------------------------------------------------------
-arrayTypedef ::= ARRAY ID:name EQ type:t LBRACK RBRACK SEMICOLON            {:RESULT = new AST_ARRAYTYPEDEF(name, t);:};
+arrayTypedef ::= ARRAY ID:name EQ type:t LBRACK RBRACK SEMICOLON            {:RESULT = new AST_ARRAYTYPEDEF(name, t, lexer.getLine());:};
 
 
 varDec ::=
-            type:t     ID:name SEMICOLON             {:RESULT = new AST_VARDEC(t,name,null,null);:}
-           |type:t     ID:name     ASSIGN exp:exp SEMICOLON            {:RESULT = new AST_VARDEC(t,name,exp,null);:}
-           |type:t     ID:name     ASSIGN newExp:exp SEMICOLON              {:RESULT = new AST_VARDEC(t,name,null,exp);:}
+            type:t     ID:name SEMICOLON             {:RESULT = new AST_VARDEC(t,name,null,null, lexer.getLine());:}
+           |type:t     ID:name     ASSIGN exp:exp SEMICOLON            {:RESULT = new AST_VARDEC(t,name,exp,null,lexer.getLine());:}
+           |type:t     ID:name     ASSIGN newExp:exp SEMICOLON              {:RESULT = new AST_VARDEC(t,name,null,exp,lexer.getLine());:}
            ;
 
 
 funcDec ::=
-             type:t     ID:name     LPAREN RPAREN LBRACE stmtList:lst RBRACE                {:RESULT = new AST_FUNCDEC(t, name, null, lst);:}
-             |type:t     ID:name     LPAREN argList:args RPAREN LBRACE stmtList:lst RBRACE   {:RESULT = new AST_FUNCDEC(t, name, args, lst);:}
+             type:t     ID:name     LPAREN RPAREN LBRACE stmtList:lst RBRACE                {:RESULT = new AST_FUNCDEC(t, name, null, lst,lexer.getLine());:}
+             |type:t     ID:name     LPAREN argList:args RPAREN LBRACE stmtList:lst RBRACE   {:RESULT = new AST_FUNCDEC(t, name, args, lst, lexer.getLine());:}
             ;
 
 
 classDec ::=
-             CLASS ID:name LBRACE cFieldList:lst RBRACE             {:RESULT = new AST_CLASSDEC(name, null, lst);:}
-            |CLASS ID:name EXTENDS ID:parentClass LBRACE cFieldList :lst RBRACE             {:RESULT = new AST_CLASSDEC(name, parentClass, lst);:}
+             CLASS ID:name LBRACE cFieldList:lst RBRACE             {:RESULT = new AST_CLASSDEC(name, null, lst, lexer.getLine());:}
+            |CLASS ID:name EXTENDS ID:parentClass LBRACE cFieldList :lst RBRACE             {:RESULT = new AST_CLASSDEC(name, parentClass, lst, lexer.getLine());:}
             ;
 
 // region end ----------------------------------------------------------------------------------------
 
 
 exp ::=
-             var:v          {:RESULT = new AST_EXP_VAR(v,v.line);:}
-            |LPAREN exp:exp RPAREN              {:RESULT = new AST_EXP_LEXPR(exp,exp.line);:}
-            |exp:e1 BINOP:OP exp:e2 			{: RESULT = new AST_EXP_BINOP(e1,e2,OP.OP, e1.line);   :}
+             var:v          {:RESULT = new AST_EXP_VAR(v,lexer.getLine());:}
+            |LPAREN exp:exp RPAREN              {:RESULT = new AST_EXP_LEXPR(exp,lexer.getLine());:}
+            |exp:e1 BINOP:OP exp:e2 			{: RESULT = new AST_EXP_BINOP(e1,e2,OP.OP, lexer.getLine());   :}
 
             // region start TODO --------------------------------------------------------
-            |ID:fname LPAREN RPAREN             {:RESULT = new AST_EXP_FUNC(null,fname,null);:}
-            |ID:fname LPAREN expList:args RPAREN            {:RESULT = new AST_EXP_FUNC(null,fname,args);:}
-            |var:v DOT ID:name LPAREN RPAREN           {:RESULT = new AST_EXP_FUNC(v, name,null);:}
-            |var:v DOT ID:name LPAREN expList:args RPAREN          {:RESULT = new AST_EXP_FUNC(v, name,args);:}
+            |ID:fname LPAREN RPAREN             {:RESULT = new AST_EXP_FUNC(null,fname,null,lexer.getLine());:}
+            |ID:fname LPAREN expList:args RPAREN            {:RESULT = new AST_EXP_FUNC(null,fname,args,lexer.getLine());:}
+            |var:v DOT ID:name LPAREN RPAREN           {:RESULT = new AST_EXP_FUNC(v, name,null,lexer.getLine());:}
+            |var:v DOT ID:name LPAREN expList:args RPAREN          {:RESULT = new AST_EXP_FUNC(v, name,args,lexer.getLine());:}
 
 
 
-            |INT:i          {: RESULT = new AST_EXP_INT(i); :}
-           	|MINUS INT:i            {: RESULT = new AST_EXP_INT(-i); :}
-           	|NIL:line               {:RESULT = new AST_EXP_NIL(line);:}
-           	|STRING:s           {: RESULT = new AST_EXP_STRING(s);       :}
+            |INT:i          {: RESULT = new AST_EXP_INT(i,lexer.getLine()); :}
+           	|MINUS INT:i            {: RESULT = new AST_EXP_INT(-i,lexer.getLine()); :}
+         // ------------TODO WTF IS THAT ------------------------------
+           	|NIL               {:RESULT = new AST_EXP_NIL(line,lexer.getLine());:}
+         //TODO END
+           	|STRING:s           {: RESULT = new AST_EXP_STRING(s,lexer.getLine());       :}
            	//region end ---------------------------------------------------------
             ;
 
@@ -205,84 +207,84 @@ exp ::=
 
 var ::=
             //region start TODO ---------------------------------------------------------
-            ID:name             {:RESULT = new AST_VAR_SIMPLE(name);:}
+            ID:name             {:RESULT = new AST_VAR_SIMPLE(name,lexer.getLine());:}
             //region end ---------------------------------------------------------
-            |var:v DOT ID:name              {:RESULT = new AST_VAR_FIELD(v,name, v.line);:}
-            |var:v LBRACK exp:exp RBRACK            {:RESULT = new AST_VAR_SUBSCRIPT(v, exp, v.line);:}
+            |var:v DOT ID:name              {:RESULT = new AST_VAR_FIELD(v,name, lexer.getLine());:}
+            |var:v LBRACK exp:exp RBRACK            {:RESULT = new AST_VAR_SUBSCRIPT(v, exp, lexer.getLine());:}
 
             ;
 
 
 
 
-stmt			::= varDec:vd					            {: RESULT = new  AST_STMT_DEC_VAR(vd, vd.line);       :}
-					| var:v  ASSIGN exp:e SEMICOLON			{: RESULT = new AST_STMT_ASSIGN(v,e,null, v.line);     :}
-					| var:v  ASSIGN newExp:ne SEMICOLON		{: RESULT = new AST_STMT_ASSIGN(v,null,ne, v.line);:}
+stmt			::= varDec:vd					            {: RESULT = new  AST_STMT_DEC_VAR(vd, lexer.getLine());       :}
+					| var:v  ASSIGN exp:e SEMICOLON			{: RESULT = new AST_STMT_ASSIGN(v,e,null, lexer.getLine());     :}
+					| var:v  ASSIGN newExp:ne SEMICOLON		{: RESULT = new AST_STMT_ASSIGN(v,null,ne, lexer.getLine());:}
 			// ---------------------start region TODO-------------------------------------------------------
-					| RETURN:line SEMICOLON				{: RESULT = new AST_STMT_RETURN(null, line);     :} // add line
+					| RETURN SEMICOLON				{: RESULT = new AST_STMT_RETURN(null, lexer.getLine());     :} // add line
 			// ---------------------end region --------------------------------------------------------
-					| RETURN exp:e SEMICOLON			{: RESULT = new AST_STMT_RETURN(e,e.line);     :}
-					| IF LPAREN exp:e RPAREN LBRACE stmtList:sr RBRACE	{: RESULT = new AST_STMT_IF(e,sr,e.line);     :}
-					| WHILE LPAREN exp:e RPAREN LBRACE stmtList:sr RBRACE	{: RESULT = new AST_STMT_WHILE(e,sr,e.line);     :}
+					| RETURN exp:e SEMICOLON			{: RESULT = new AST_STMT_RETURN(e,lexer.getLine());     :}
+					| IF LPAREN exp:e RPAREN LBRACE stmtList:sr RBRACE	{: RESULT = new AST_STMT_IF(e,sr,lexer.getLine());     :}
+					| WHILE LPAREN exp:e RPAREN LBRACE stmtList:sr RBRACE	{: RESULT = new AST_STMT_WHILE(e,sr,lexer.getLine());     :}
 			//----------------------start region TODO------------------------------------------------------
-					| ID:name LPAREN RPAREN SEMICOLON	{: RESULT = new AST_STMT_FUNCCALL(name,null,null);      	 :}
-					| ID:name LPAREN expList:et RPAREN SEMICOLON	{: RESULT = new AST_STMT_FUNCCALL(name,null,et);      	 :}
-					| var:v DOT ID:name LPAREN RPAREN SEMICOLON	{: RESULT = new AST_STMT_FUNCCALL(name,v,null);      	 :}
-					| var:v DOT ID:name LPAREN expList:et RPAREN SEMICOLON{:RESULT = new AST_STMT_FUNCCALL(name,v,et);      :}
+					| ID:name LPAREN RPAREN SEMICOLON	{: RESULT = new AST_STMT_FUNCCALL(name,null,null,lexer.getLine());      	 :}
+					| ID:name LPAREN expList:et RPAREN SEMICOLON	{: RESULT = new AST_STMT_FUNCCALL(name,null,et,lexer.getLine());      	 :}
+					| var:v DOT ID:name LPAREN RPAREN SEMICOLON	{: RESULT = new AST_STMT_FUNCCALL(name,v,null,lexer.getLine());      	 :}
+					| var:v DOT ID:name LPAREN expList:et RPAREN SEMICOLON{:RESULT = new AST_STMT_FUNCCALL(name,v,et,lexer.getLine());      :}
 			//----------------------end region----------------------------------------------------------
 					;
 
 
 newExp ::=
-            NEW type:t          {:RESULT = new AST_NEW_EXP(t,null, t.line);:}
-            |NEW type:t LBRACK exp:exp RBRACK           {:RESULT = new AST_NEW_EXP(t,exp, t.line);:}
+            NEW type:t          {:RESULT = new AST_NEW_EXP(t,null, lexer.getLine());:}
+            |NEW type:t LBRACK exp:exp RBRACK           {:RESULT = new AST_NEW_EXP(t,exp, lexer.getLine());:}
             ;
 
 
 cField ::=
-            varDec:v           {: RESULT = new AST_CFIELD_DEC_VAR(v,v.line); :}
-            |funcDec:f           {: RESULT = new AST_CFIELD_DEC_FUNC(f,f.line); :}
+            varDec:v           {: RESULT = new AST_CFIELD_DEC_VAR(v,lexer.getLine()); :}
+            |funcDec:f           {: RESULT = new AST_CFIELD_DEC_FUNC(f,lexer.getLine()); :}
             ;
 
 
 arg ::=
     // ---------------- start region TODO----------------------------------
-            type:t ID:name          {: RESULT = new AST_ARG(t, name); :}
+            type:t ID:name          {: RESULT = new AST_ARG(t, name,lexer.getLine()); :}
 		    ;
     // ---------------- end region  -----------------------------------------
 
 
 stmtList ::=
-             stmt:s         {:RESULT = new AST_STMT_LIST(s,null,s.line);:}
-            |stmt:s stmtList:lst            {:RESULT = new AST_STMT_LIST(s,lst, s.line);:}
+             stmt:s         {:RESULT = new AST_STMT_LIST(s,null,lexer.getLine());:}
+            |stmt:s stmtList:lst            {:RESULT = new AST_STMT_LIST(s,lst,lexer.getLine());:}
             ;
 
 
 argList ::=
-            arg:a           {:RESULT = new AST_ARG_LIST(a,null, a.line);:}
-            |arg:a1 COMMA argList:lst           {:RESULT = new AST_ARG_LIST(a1,lst, a1.line);:}
+            arg:a           {:RESULT = new AST_ARG_LIST(a,null, lexer.getLine());:}
+            |arg:a1 COMMA argList:lst           {:RESULT = new AST_ARG_LIST(a1,lst, lexer.getLine());:}
             ;
 
 
 cFieldList ::=
-                cField:cf          {: RESULT = new AST_CFIELD_LIST(cf,null, cf.line); :}
-                |cField:cf	cFieldList:lst          {: RESULT = new AST_CFIELD_LIST(cf,lst, cf.line);:}
+                cField:cf          {: RESULT = new AST_CFIELD_LIST(cf,null, lexer.getLine()); :}
+                |cField:cf	cFieldList:lst          {: RESULT = new AST_CFIELD_LIST(cf,lst, lexer.getLine());:}
                 ;
 
 
 expList	::=
-			exp:exp COMMA expList:lst          {: RESULT = new AST_EXP_LIST(exp,lst, exp.line);:}
-		    |exp:exp            {: RESULT = new AST_EXP_LIST(exp,null, exp.line); :}
+			exp:exp COMMA expList:lst          {: RESULT = new AST_EXP_LIST(exp,lst, lexer.getLine());:}
+		    |exp:exp            {: RESULT = new AST_EXP_LIST(exp,null, lexer.getLine()); :}
 		    ;
 
 
 // ------------------ start region TODO -----------------------------------------------------------------
-BINOP ::=             PLUS						{: RESULT = new AST_BINOP(0);       :}
-					| MINUS						{: RESULT = new AST_BINOP(1);       :}
-					| TIMES						{: RESULT = new AST_BINOP(2);       :}
-					| DIVIDE					{: RESULT = new AST_BINOP(3);       :}
-					| LT						{: RESULT = new AST_BINOP(4);       :}
-					| GT						{: RESULT = new AST_BINOP(5);       :}
-					| EQ						{: RESULT = new AST_BINOP(6);       :}
+BINOP ::=             PLUS						{: RESULT = new AST_BINOP(0, lexer.getLine());      :}
+					| MINUS						{: RESULT = new AST_BINOP(1,lexer.getLine());       :}
+					| TIMES						{: RESULT = new AST_BINOP(2,lexer.getLine());       :}
+					| DIVIDE					{: RESULT = new AST_BINOP(3,lexer.getLine());       :}
+					| LT						{: RESULT = new AST_BINOP(4,lexer.getLine());       :}
+					| GT						{: RESULT = new AST_BINOP(5,lexer.getLine());       :}
+					| EQ						{: RESULT = new AST_BINOP(6,lexer.getLine());       :}
 					;
 // ----------------- end region --------------------------------------------------------------------------

@@ -8,8 +8,9 @@ public class AST_ARG extends AST_Node {
     /******************/
     /* CONSTRUCTOR(S) */
     /******************/
-    public AST_ARG(AST_TYPE type, String name)
+    public AST_ARG(AST_TYPE type, String name,int line)
     {
+        this.line = line;
         /******************************/
         /* SET A UNIQUE SERIAL NUMBER */
         /******************************/

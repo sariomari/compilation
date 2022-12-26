@@ -5,8 +5,9 @@ public class AST_BINOP extends AST_Node{
     /******************/
     /* CONSTRUCTOR(S) */
     /******************/
-    public AST_BINOP(int OP)
+    public AST_BINOP(int OP, int line)
     {
+        this.line = line;
         /******************************/
         /* SET A UNIQUE SERIAL NUMBER */
         /******************************/

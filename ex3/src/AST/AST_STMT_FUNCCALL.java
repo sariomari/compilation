@@ -12,8 +12,9 @@ public class AST_STMT_FUNCCALL extends AST_STMT
     /******/
     /* CONSTRUCTOR(S) */
     /******/
-    public AST_STMT_FUNCCALL(String fname, AST_VAR v, AST_EXP_LIST l)
+    public AST_STMT_FUNCCALL(String fname, AST_VAR v, AST_EXP_LIST l, int line)
     {
+        this.line = line;
         /**********/
         /* SET A UNIQUE SERIAL NUMBER */
         /**********/

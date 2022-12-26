@@ -8,6 +8,7 @@ public class AST_DEC_FUNCDEC extends AST_DEC{
     /******************/
     public AST_DEC_FUNCDEC(AST_FUNCDEC funcDec, int line)
     {
+        this.line = line;
         /******************************/
         /* SET A UNIQUE SERIAL NUMBER */
         /******************************/
@@ -17,7 +18,7 @@ public class AST_DEC_FUNCDEC extends AST_DEC{
         /* COPY INPUT DATA NENBERS ... */
         /*******************************/
         this.funcDec = funcDec;
-        this.line = line;
+
     }
 
     /***************************************************/

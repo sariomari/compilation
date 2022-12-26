@@ -5,8 +5,10 @@ import SYMBOL_TABLE.*;
 
 public class AST_TYPE extends AST_Node {
     public String typeName;
+    int line;
 
-    public AST_TYPE(String type){
+    public AST_TYPE(String type, int line){
+        this.line= line;
         /******************************/
         /* SET A UNIQUE SERIAL NUMBER */
         /******************************/

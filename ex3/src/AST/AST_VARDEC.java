@@ -14,8 +14,9 @@ public class AST_VARDEC extends AST_Node {
     private String var_label;
 
 
-    public AST_VARDEC(AST_TYPE type, String name, AST_EXP exp, AST_NEW_EXP newExp){
-
+    public AST_VARDEC(AST_TYPE type, String name, AST_EXP exp, AST_NEW_EXP newExp, int line)
+    {
+        this.line = line;
         SerialNumber = AST_Node_Serial_Number.getFresh();
 
         this.type= type;

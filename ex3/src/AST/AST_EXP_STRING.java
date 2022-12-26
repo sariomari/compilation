@@ -4,7 +4,8 @@ public class AST_EXP_STRING extends AST_EXP {
     public String str;
 
 
-    public AST_EXP_STRING(String str){
+    public AST_EXP_STRING(String str, int line){
+        this.line = line;
         /******************************/
         /* SET A UNIQUE SERIAL NUMBER */
         /******************************/

@@ -5,7 +5,8 @@ public class AST_EXP_FUNC extends AST_EXP{
     public String name;
     public AST_EXP_LIST args;
 
-    public AST_EXP_FUNC(AST_VAR v,String name, AST_EXP_LIST args ) {
+    public AST_EXP_FUNC(AST_VAR v,String name, AST_EXP_LIST args, int line ) {
+        this.line = line;
         /******************************/
         /* SET A UNIQUE SERIAL NUMBER */
         /******************************/

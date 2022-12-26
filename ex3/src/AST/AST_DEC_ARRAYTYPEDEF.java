@@ -9,6 +9,7 @@ public class AST_DEC_ARRAYTYPEDEF extends AST_DEC{
     /******************/
     public AST_DEC_ARRAYTYPEDEF(AST_ARRAYTYPEDEF arrayDec, int line)
     {
+        this.line = line;
         /******************************/
         /* SET A UNIQUE SERIAL NUMBER */
         /******************************/
@@ -18,7 +19,7 @@ public class AST_DEC_ARRAYTYPEDEF extends AST_DEC{
         /* COPY INPUT DATA NENBERS ... */
         /*******************************/
         this.arrayDec = arrayDec;
-        this.line = line;
+
     }
 
     /****************************************************/

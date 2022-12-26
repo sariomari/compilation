@@ -5,9 +5,9 @@ public class AST_CLASSDEC extends AST_DEC{
     public String parentClass;
     public AST_CFIELD_LIST lst;
 
-    public AST_CLASSDEC(String name, String parentClass, AST_CFIELD_LIST lst)
+    public AST_CLASSDEC(String name, String parentClass, AST_CFIELD_LIST lst, int line)
     {
-
+        this.line = line;
 
         /******************************/
         /* SET A UNIQUE SERIAL NUMBER */
