@@ -38,6 +38,7 @@ public class AST_VAR_SIMPLE extends AST_VAR
 			SerialNumber,
 			String.format("VAR\nSIMPLE\n(%s)",name));
 	}
+
 	public TYPE SemantMe() throws SemanticException
 	{
 		/* Make sure that the variable is already declared */

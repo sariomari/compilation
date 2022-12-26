@@ -1,5 +1,5 @@
 package AST;
-
+import TYPES.*;
 public class AST_DEC_FUNCDEC extends AST_DEC{
     public AST_FUNCDEC funcDec;
 
@@ -41,5 +41,9 @@ public class AST_DEC_FUNCDEC extends AST_DEC{
         /* PRINT Edges to AST GRAPHVIZ DOT file */
         /****************************************/
         if (funcDec  != null) AST_GRAPHVIZ.getInstance().logEdge(SerialNumber,funcDec.SerialNumber);
+    }
+    public TYPE SemantMe() throws SemanticException
+    {
+        return funcDec.SemantMe();
     }
 }

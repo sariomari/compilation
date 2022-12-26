@@ -1,7 +1,10 @@
 package AST;
+import TYPES.*;
+import SYMBOL_TABLE.*;
 
 public class AST_STMT_RETURN extends AST_STMT{
     public AST_EXP exp;
+    private String epilogue_label;
 
     public AST_STMT_RETURN(AST_EXP exp, int line){
         this.line = line;
@@ -37,5 +40,43 @@ public class AST_STMT_RETURN extends AST_STMT{
         /* PRINT Edges to AST GRAPHVIZ DOT file */
         /****************************************/
         if (exp != null) AST_GRAPHVIZ.getInstance().logEdge(SerialNumber,exp.SerialNumber);
+    }
+    public TYPE SemantMe() throws SemanticException
+    {
+        this.epilogue_label = SYMBOL_TABLE.getInstance().current_function.epilogue_label;
+        /* Make sure that the returned value matches the functions return value */
+        TYPE_FUNCTION current_function = SYMBOL_TABLE.getInstance().current_function;
+        if (exp == null)
+        {
+            if (current_function.returnType.typeEnum == TypeEnum.TYPE_VOID)
+            {
+                return null;
+            }
+            throw new SemanticException(line);
+        }
+        TYPE exp_type = exp.SemantMe();
+        if (exp_type.typeEnum != current_function.returnType.typeEnum)
+        {
+            if (!(exp_type.typeEnum == TypeEnum.TYPE_NIL && (current_function.returnType.typeEnum == TypeEnum.TYPE_CLASS || current_function.returnType.typeEnum == TypeEnum.TYPE_ARRAY)))
+            {
+                throw new SemanticException(line);
+            }
+        }
+
+        else if (exp_type.typeEnum == TypeEnum.TYPE_CLASS)
+        {
+            TYPE_CLASS exp_class = (TYPE_CLASS) exp_type;
+            TYPE_CLASS return_class = (TYPE_CLASS) current_function.returnType;
+            if (!return_class.is_replacable(exp_class)) throw new SemanticException(line);
+        }
+
+        else if (exp_type.typeEnum == TypeEnum.TYPE_ARRAY)
+        {
+            TYPE_ARRAY exp_array = (TYPE_ARRAY) exp_type;
+            TYPE_ARRAY return_array = (TYPE_ARRAY) current_function.returnType;
+            if (!return_array.is_replacable(exp_array)) throw new SemanticException(line);
+        }
+
+        return null;
     }
 }

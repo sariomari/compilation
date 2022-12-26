@@ -196,7 +196,7 @@ exp ::=
 
             |INT:i          {: RESULT = new AST_EXP_INT(i); :}
            	|MINUS INT:i            {: RESULT = new AST_EXP_INT(-i); :}
-           	|NIL
+           	|NIL:line               {:RESULT = new AST_EXP_NIL(line);:}
            	|STRING:s           {: RESULT = new AST_EXP_STRING(s);       :}
            	//region end ---------------------------------------------------------
             ;
@@ -215,9 +215,9 @@ var ::=
 
 
 
-stmt			::= 		varDec:vd					{: RESULT = new  AST_STMT_DEC_VAR(vd, vd.line);       :}
-					| var:v  ASSIGN exp:e SEMICOLON			{: RESULT = new AST_VAR_SUBSCRIPT_NEWEXP(v,e,null, v.line);     :}
-					| var:v  ASSIGN newExp:ne SEMICOLON		{: RESULT = new AST_VAR_SUBSCRIPT_NEWEXP(v,null,ne, v.line);:}
+stmt			::= varDec:vd					            {: RESULT = new  AST_STMT_DEC_VAR(vd, vd.line);       :}
+					| var:v  ASSIGN exp:e SEMICOLON			{: RESULT = new AST_STMT_ASSIGN(v,e,null, v.line);     :}
+					| var:v  ASSIGN newExp:ne SEMICOLON		{: RESULT = new AST_STMT_ASSIGN(v,null,ne, v.line);:}
 			// ---------------------start region TODO-------------------------------------------------------
 					| RETURN:line SEMICOLON				{: RESULT = new AST_STMT_RETURN(null, line);     :} // add line
 			// ---------------------end region --------------------------------------------------------

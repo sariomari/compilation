@@ -1,4 +1,5 @@
 package AST;
+import TYPES.*;
 
 public class AST_DEC_ARRAYTYPEDEF extends AST_DEC{
     public AST_ARRAYTYPEDEF arrayDec;
@@ -41,5 +42,9 @@ public class AST_DEC_ARRAYTYPEDEF extends AST_DEC{
         /* PRINT Edges to AST GRAPHVIZ DOT file */
         /****************************************/
         if (arrayDec  != null) AST_GRAPHVIZ.getInstance().logEdge(SerialNumber,arrayDec.SerialNumber);
+    }
+    public TYPE SemantMe() throws SemanticException
+    {
+        return arrayDec.SemantMe();
     }
 }

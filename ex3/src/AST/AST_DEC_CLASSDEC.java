@@ -1,4 +1,5 @@
 package AST;
+import TYPES.*;
 
 public class AST_DEC_CLASSDEC extends AST_DEC{
     public AST_CLASSDEC classDec;
@@ -41,5 +42,9 @@ public class AST_DEC_CLASSDEC extends AST_DEC{
         /* PRINT Edges to AST GRAPHVIZ DOT file */
         /****************************************/
         if (classDec  != null) AST_GRAPHVIZ.getInstance().logEdge(SerialNumber,classDec.SerialNumber);
+    }
+    public TYPE SemantMe() throws SemanticException
+    {
+        return classDec.SemantMe();
     }
 }

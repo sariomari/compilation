@@ -1,4 +1,6 @@
 package AST;
+import TYPES.*;
+import SYMBOL_TABLE.*;
 
 public class AST_STMT_IF extends AST_STMT
 {
@@ -46,5 +48,34 @@ public class AST_STMT_IF extends AST_STMT
 		/****************************************/
 		if (cond != null) AST_GRAPHVIZ.getInstance().logEdge(SerialNumber,cond.SerialNumber);
 		if (body != null) AST_GRAPHVIZ.getInstance().logEdge(SerialNumber,body.SerialNumber);
+	}
+
+	public TYPE SemantMe() throws SemanticException
+	{
+		/* Make sure that the if's condition is an int */
+		if (cond.SemantMe().typeEnum != TypeEnum.TYPE_INT)
+		{
+			throw new SemanticException(line);
+		}
+
+		/*************************/
+		/* [1] Begin Class Scope */
+		/*************************/
+		SYMBOL_TABLE.getInstance().beginScope("if");
+
+		/***************************/
+		/* [2] Semant Data Members */
+		/***************************/
+		body.SemantMe();
+
+		/*****************/
+		/* [3] End Scope */
+		/*****************/
+		SYMBOL_TABLE.getInstance().endScope();
+
+		/*********************************************************/
+		/* [4] Return value is irrelevant for class declarations */
+		/*********************************************************/
+		return null;
 	}
 }
