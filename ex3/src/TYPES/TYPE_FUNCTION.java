@@ -1,8 +1,5 @@
 package TYPES;
-
 import SYMBOL_TABLE.*;
-
-import java.util.Objects;
 
 public class TYPE_FUNCTION extends TYPE
 {

@@ -1,5 +1,5 @@
 package AST;
-
+import TYPES.*;
 public class AST_EXP_INT extends AST_EXP
 {
 	public int value;
@@ -32,5 +32,10 @@ public class AST_EXP_INT extends AST_EXP
 		AST_GRAPHVIZ.getInstance().logNode(
 			SerialNumber,
 			String.format("EXP\nINT(%d)",value));
+	}
+
+	public TYPE SemantMe() throws SemanticException
+	{
+		return TYPE_INT.getInstance();
 	}
 }
