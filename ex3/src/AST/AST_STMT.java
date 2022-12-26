@@ -1,4 +1,5 @@
 package AST;
+
 import TYPES.*;
 
 public class AST_STMT extends AST_Node
@@ -10,6 +11,7 @@ public class AST_STMT extends AST_Node
 	{
 		System.out.print("UNKNOWN AST STATEMENT NODE");
 	}
+	
 	public TYPE SemantMe() throws SemanticException
 	{
 		return null;
