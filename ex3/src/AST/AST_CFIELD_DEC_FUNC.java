@@ -1,5 +1,5 @@
 package AST;
-
+import TYPES.*;
 public class AST_CFIELD_DEC_FUNC extends AST_CFIELD
 {
     public AST_FUNCDEC funcDec;
