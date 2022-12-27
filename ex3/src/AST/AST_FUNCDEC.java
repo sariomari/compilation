@@ -15,7 +15,8 @@ public class AST_FUNCDEC extends AST_Node {
     public int parameters_num;
 	public int local_var_num;
 
-    public AST_FUNCDEC(AST_TYPE type, String name, AST_ARG_LIST args, AST_STMT_LIST stmt_lst) {
+    public AST_FUNCDEC(AST_TYPE type, String name, AST_ARG_LIST args, AST_STMT_LIST stmt_lst, int line) {
+        this.line = line;
         /******************************/
         /* SET A UNIQUE SERIAL NUMBER */
         /******************************/
