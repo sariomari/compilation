@@ -1,0 +1,15 @@
+array IntArr = int[];
+class A {
+	IntArr arr2;
+	void init(int num) {arr2 := new int[1];
+ 				arr2[0] := num;}
+}
+array AArray = A[];
+
+void main() {
+	AArray arr := new A[3];
+	arr[0] := new A;
+	arr[0].init(123);
+	
+	
+}

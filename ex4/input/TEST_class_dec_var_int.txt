@@ -1,0 +1,8 @@
+class A {
+	int i := 10;
+}
+
+void main() {
+    A a := new A;
+    PrintInt(a.i);
+}

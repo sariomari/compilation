@@ -1,0 +1,5 @@
+int i := -32766;
+int j := -10;
+void main() {
+    PrintInt(i + j);
+}

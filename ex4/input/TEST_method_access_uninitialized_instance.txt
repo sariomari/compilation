@@ -1,0 +1,11 @@
+class A {
+	int coco := 4;
+	void print() {
+			PrintInt(coco);
+	}
+}
+
+void main() {
+	A a;
+	a.print();
+}

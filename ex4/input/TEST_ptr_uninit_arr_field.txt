@@ -1,0 +1,13 @@
+class A {
+	int i;
+	void f() {
+		return;
+	}
+}
+
+array arrA = A[];
+
+void main() {
+	arrA arri := new A[13];
+	arri[0].i := 4;
+}

@@ -1,0 +1,91 @@
+.data
+string_access_violation: .asciiz "Access Violation"
+string_illegal_div_by_0: .asciiz "Illegal Division By Zero"
+string_invalid_ptr_dref: .asciiz "Invalid Pointer Dereference"
+_A_vt:
+	.word _init_A
+.text
+	j _init_A_end
+_init_A:
+	subu $sp, $sp, 4
+	sw $ra, 0($sp)
+	subu $sp, $sp, 4
+	sw $fp, 0($sp)
+	move $fp, $sp
+	subu $sp, $sp, 4
+	sw $t0, 0($sp)
+	subu $sp, $sp, 4
+	sw $t1, 0($sp)
+	subu $sp, $sp, 4
+	sw $t2, 0($sp)
+	subu $sp, $sp, 4
+	sw $t3, 0($sp)
+	subu $sp, $sp, 4
+	sw $t4, 0($sp)
+	subu $sp, $sp, 4
+	sw $t5, 0($sp)
+	subu $sp, $sp, 4
+	sw $t6, 0($sp)
+	subu $sp, $sp, 4
+	sw $t7, 0($sp)
+	subu $sp, $sp, 4
+	sw $t8, 0($sp)
+	subu $sp, $sp, 4
+	sw $t9, 0($sp)
+	subu $sp, $sp, 0
+	li $t0, 1
+	addu $a0, $t0, 1
+	sll $a0, $a0, 2
+	li $v0, 9
+	syscall
+	sw $t0, 0($v0)
+	move $t0, $v0
+	sw $t0, 8($fp)
+	bne $s6, $zero, Label_0_invalid_dereference_check_end
+	la $a0, string_invalid_ptr_dref
+	li $v0, 4
+	syscall
+	li $v0, 10
+	syscall
+Label_0_invalid_dereference_check_end:
+	li $s0, 1
+	sll $s0, $s0, 2
+	add $s1, $s6, $s0
+	lw $t2, 0($s1)
+	li $t1, 0
+	lw $t0, 8($fp)
+	lw $s0, 0($t2)
+	blt $t1, $zero, Label_1_access_violation
+	bge $t1, $s0, Label_1_access_violation
+	j Label_2_violation_check_end
+Label_1_access_violation:
+	la $a0, string_access_violation
+	li $v0, 4
+	syscall
+	li $v0, 10
+	syscall
+Label_2_violation_check_end:
+	addu $t1, $t1, 1
+	sll $s0, $t1, 2
+	add $s0, $s0, $t2
+	sw $t0, 0($s0)
+_init_A_epilogue:
+	move $sp, $fp
+	lw $t0, -4($sp)
+	lw $t1, -8($sp)
+	lw $t2, -12($sp)
+	lw $t3, -16($sp)
+	lw $t4, -20($sp)
+	lw $t5, -24($sp)
+	lw $t6, -28($sp)
+	lw $t7, -32($sp)
+	lw $t8, -36($sp)
+	lw $t9, -40($sp)
+	lw $fp, 0($sp)
+	addu $sp, $sp, 4
+	lw $ra, 0($sp)
+	addu $sp, $sp, 4
+	jr $ra
+_init_A_end:
+	li $v0, 10
+	syscall

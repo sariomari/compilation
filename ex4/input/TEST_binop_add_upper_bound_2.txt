@@ -1,0 +1,4 @@
+int i := 32766;
+void main() {
+    PrintInt(i + 5);
+}
